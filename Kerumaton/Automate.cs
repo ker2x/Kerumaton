@@ -7,6 +7,7 @@ namespace Kerumaton
 {
     class Automate
     {
+        Random rand = new Random();
         // The automate position
         public class Position
         {
@@ -30,11 +31,11 @@ namespace Kerumaton
 
         public Position pos;
 
-        public enum Direction { N,NE,E,SE,S,SW,W,NW}
+        public enum Direction { N = 0,E = 1, S = 2, W = 3}
         public int id { get; set; }
         public int hp { get; set; }
         public bool isAlive { get; set; }
-        public Colors color { get; set; }
+        public Color color { get; set; }
         public int energy { get; set; }
         public int lifetime { get; set; }
 
@@ -42,8 +43,14 @@ namespace Kerumaton
 
         public Automate(int x, int y, int id)
         {
-            pos = new Position(x, y);
+            this.pos = new Position(x, y);
             this.id = id;
+            color = Color.FromRgb((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
+        }
+
+        public Direction RandomDirection()
+        {
+            return (Direction)rand.Next(Enum.GetNames(typeof(Direction)).Length);
         }
 
         public bool Move(Direction dir)
@@ -61,10 +68,28 @@ namespace Kerumaton
                     }
                 case Direction.S:
                     {
-                        if (pos.y == MainWindow.bmp.PixelHeight - 1) return false;
+                        if (pos.y == MainWindow.imageHeight - 1) return false;
                         else
                         {
                             pos.y++;
+                            return true;
+                        }
+                    }
+                case Direction.W:
+                    {
+                        if (pos.x == 0) return false;
+                        else
+                        {
+                            pos.x--;
+                            return true;
+                        }
+                    }
+                case Direction.E:
+                    {
+                        if (pos.x == MainWindow.imageWidth - 1) return false;
+                        else
+                        {
+                            pos.x++;
                             return true;
                         }
                     }
