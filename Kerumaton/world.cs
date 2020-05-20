@@ -4,8 +4,9 @@ using System.Text;
 
 namespace Kerumaton
 {
-    class World
+    static class World
     {
-        public int maxAutomaton;
+        static public int maxAutomaton;
+        static public int maxLifetime = 10000;
     }
 }

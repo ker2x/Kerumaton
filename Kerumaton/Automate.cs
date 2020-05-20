@@ -38,17 +38,13 @@ namespace Kerumaton
         public Color color { get; set; }
         public int energy { get; set; }
         public int lifetime { get; set; }
-        public int maxLifetime { get; set; }
-
-
 
         public Automate(int x, int y, int id)
         {
             this.pos = new Position(x, y);
             this.id = id;
             color = Color.FromRgb((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
-            maxLifetime = 10000;
-            lifetime = rand.Next(maxLifetime);
+            lifetime = rand.Next(World.maxLifetime);
         }
 
         public void SampleTick(List<Automate> bots)
@@ -71,10 +67,10 @@ namespace Kerumaton
                     closestDistance = distance;
                 }
             }
-            if (lifetime >= maxLifetime) { 
+            if (lifetime >= World.maxLifetime) { 
                 this.pos.y = rand.Next(MainWindow.imageHeight); 
                 this.pos.x = rand.Next(MainWindow.imageWidth);
-                lifetime = rand.Next(maxLifetime);
+                lifetime = rand.Next(World.maxLifetime);
             }
             //if (rand.Next(1000) == 0) { this.Move(this.RandomDirection()); }
             else
