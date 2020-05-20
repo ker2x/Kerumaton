@@ -55,7 +55,8 @@ namespace Kerumaton
             //Sample bot
             for (int i = 0; i < World.maxAutomaton; i++)
             {
-                bots.Add(new Automate(rand.Next(0,imageWidth-1), rand.Next(0, imageHeight-1), i));
+                //bots.Add(new Automate(rand.Next(0,imageWidth-1), rand.Next(0, imageHeight-1), i));
+                bots.Add(new Automate(rand.Next(400,600), rand.Next(400,600), i));
             }
             //Set xaml Image as the bmp & update the screen
             tasks.StartNew(() => MainLoop());
@@ -63,6 +64,7 @@ namespace Kerumaton
 
         private void MainLoop()
         {
+            Thread.Sleep(3000);
             while (true)
             {
                 Parallel.ForEach(bots, (bot) =>

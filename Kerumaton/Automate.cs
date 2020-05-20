@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Media;
 using Kerumaton;
 using static Kerumaton.World;
+using System.Threading.Tasks;
 
 namespace Kerumaton
 {
@@ -33,6 +34,17 @@ namespace Kerumaton
 
         public Position pos;
 
+        //TYPE OF ACTOR TO BE EVENTUALLY IMPLEMENTED : 
+        // - Something to move
+        // - RADAR (beam, high range)
+        // - EYE (large angle, low range)
+        // - MOUTH (to eat)
+        // - Element type identifier ? (food, automata, wall)
+        // - Own Life sensor
+        // - own feed level sensor
+        // - world position sensor
+        // - sex ?
+
         public int id { get; set; }
         public int hp { get; set; }
         public bool isAlive { get; set; }
@@ -52,12 +64,27 @@ namespace Kerumaton
 
         public void SampleTick(List<Automate> bots)
         {
+            Direction closestDir = this.findClosestDirection(bots);
+
+            if (lifetime >= World.maxLifetime) { 
+                this.pos.y = rand.Next(MainWindow.imageHeight); 
+                this.pos.x = rand.Next(MainWindow.imageWidth);
+                lifetime = rand.Next(maxLifetime);
+            }
+            else if (rand.Next(1000) == 0) this.Move(this.RandomDirection());
+            else this.Move(closestDir);
+
+        }
+
+        Direction findClosestDirection(List<Automate> bots)
+        {
             double closestDistance = int.MaxValue;
             Direction closestDir = this.RandomDirection();
             Direction tmpDirx, tmpDiry;
             lifetime++;
 
             foreach (var b in bots)
+            //Parallel.ForEach( bots, b =>
             {
                 double distance = Math.Sqrt(
                     (b.pos.x - this.pos.x) * (b.pos.x - this.pos.x) + (b.pos.y - this.pos.y) * (b.pos.y - this.pos.y));
@@ -67,16 +94,11 @@ namespace Kerumaton
                     tmpDirx = (this.pos.x < b.pos.x) ? Direction.W : Direction.E;
                     tmpDiry = (this.pos.y < b.pos.y) ? Direction.N : Direction.S;
                     closestDir = (Math.Abs(b.pos.x - this.pos.x) < Math.Abs(b.pos.y - this.pos.y)) ? tmpDirx : tmpDiry;
-                    closestDistance = distance;
+                    lock ((object)closestDistance) { closestDistance = distance; }
                 }
             }
-            if (lifetime >= World.maxLifetime) { 
-                this.pos.y = rand.Next(MainWindow.imageHeight); 
-                this.pos.x = rand.Next(MainWindow.imageWidth);
-                lifetime = rand.Next(maxLifetime);
-            }
-            else if (rand.Next(1000) == 0) this.Move(this.RandomDirection());
-            else this.Move(closestDir);
+            //});
+            return closestDir;
 
         }
 

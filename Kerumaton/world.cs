@@ -7,8 +7,8 @@ namespace Kerumaton
     static class World
     {
         //Parameters
-        static public int maxAutomaton = 1000;
-        static public int maxLifetime = 10000;
+        static public int maxAutomaton = 500;
+        static public int maxLifetime = 100000;
         
         //Enums
         public enum Direction { N = 0, E = 1, S = 2, W = 3 }
