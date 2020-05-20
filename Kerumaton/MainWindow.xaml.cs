@@ -53,7 +53,7 @@ namespace Kerumaton
             MainImage.Source = bmp;
 
             //Sample bot
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < World.maxAutomaton; i++)
             {
                 bots.Add(new Automate(rand.Next(0,imageWidth-1), rand.Next(0, imageHeight-1), i));
             }
