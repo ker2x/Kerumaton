@@ -38,6 +38,7 @@ namespace Kerumaton
         public Color color { get; set; }
         public int energy { get; set; }
         public int lifetime { get; set; }
+        public int maxLifetime { get; set; }
 
 
 
@@ -46,6 +47,8 @@ namespace Kerumaton
             this.pos = new Position(x, y);
             this.id = id;
             color = Color.FromRgb((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
+            maxLifetime = 10000;
+            lifetime = rand.Next(maxLifetime);
         }
 
         public void SampleTick(List<Automate> bots)
@@ -53,6 +56,7 @@ namespace Kerumaton
             double closestDistance = int.MaxValue;
             Automate.Direction closestDir = this.RandomDirection();
             Automate.Direction tmpDirx, tmpDiry;
+            lifetime++;
 
             foreach (var b in bots)
             {
@@ -67,7 +71,11 @@ namespace Kerumaton
                     closestDistance = distance;
                 }
             }
-            if (rand.Next(10000) == 1) { this.pos.y = rand.Next(MainWindow.imageHeight); this.pos.x = rand.Next(MainWindow.imageWidth); }
+            if (lifetime >= maxLifetime) { 
+                this.pos.y = rand.Next(MainWindow.imageHeight); 
+                this.pos.x = rand.Next(MainWindow.imageWidth);
+                lifetime = rand.Next(maxLifetime);
+            }
             //if (rand.Next(1000) == 0) { this.Move(this.RandomDirection()); }
             else
             this.Move(closestDir);
