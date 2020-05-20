@@ -48,6 +48,32 @@ namespace Kerumaton
             color = Color.FromRgb((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
         }
 
+        public void SampleTick(List<Automate> bots)
+        {
+            double closestDistance = int.MaxValue;
+            Automate.Direction closestDir = this.RandomDirection();
+            Automate.Direction tmpDirx, tmpDiry;
+
+            foreach (var b in bots)
+            {
+                double distance = Math.Sqrt(
+                    (b.pos.x - this.pos.x) * (b.pos.x - this.pos.x) + (b.pos.y - this.pos.y) * (b.pos.y - this.pos.y));
+
+                if (distance < closestDistance && b.id != this.id)
+                {
+                    tmpDirx = (this.pos.x < b.pos.x) ? Automate.Direction.W : Automate.Direction.E;
+                    tmpDiry = (this.pos.y < b.pos.y) ? Automate.Direction.N : Automate.Direction.S;
+                    closestDir = (Math.Abs(b.pos.x - this.pos.x) < Math.Abs(b.pos.y - this.pos.y)) ? tmpDirx : tmpDiry;
+                    closestDistance = distance;
+                }
+            }
+            if (rand.Next(10000) == 1) { this.pos.y = rand.Next(MainWindow.imageHeight); this.pos.x = rand.Next(MainWindow.imageWidth); }
+            //if (rand.Next(1000) == 0) { this.Move(this.RandomDirection()); }
+            else
+            this.Move(closestDir);
+
+        }
+
         public Direction RandomDirection()
         {
             return (Direction)rand.Next(Enum.GetNames(typeof(Direction)).Length);

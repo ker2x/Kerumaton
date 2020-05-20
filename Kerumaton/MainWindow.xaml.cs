@@ -53,7 +53,7 @@ namespace Kerumaton
             MainImage.Source = bmp;
 
             //Sample bot
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 500; i++)
             {
                 bots.Add(new Automate(rand.Next(0,imageWidth-1), rand.Next(0, imageHeight-1), i));
             }
@@ -67,26 +67,7 @@ namespace Kerumaton
             {
                 Parallel.ForEach(bots, (bot) =>
                 {
-                    double closestDistance = int.MaxValue;
-                    Automate.Direction closestDir = bot.RandomDirection();
-                    Automate.Direction tmpDirx, tmpDiry;
-                    
-                    foreach (var b in bots)
-                    {
-                        double distance = Math.Sqrt(
-                            (b.pos.x - bot.pos.x)*(b.pos.x - bot.pos.x) + (b.pos.y - bot.pos.y)*(b.pos.y - bot.pos.y));
-
-                        if (distance < closestDistance && distance != 0)
-                        {
-                            tmpDirx = (bot.pos.x < b.pos.x) ? Automate.Direction.W : Automate.Direction.E;
-                            tmpDiry = (bot.pos.y < b.pos.y) ? Automate.Direction.N : Automate.Direction.S;
-                            closestDir = (Math.Abs(b.pos.x - bot.pos.x) < Math.Abs(b.pos.y - bot.pos.y)) ? tmpDirx : tmpDiry;
-                            closestDistance = distance;
-                        }
-                    }
-                    if (rand.Next(10000) == 1) { bot.pos.y = rand.Next(imageHeight); bot.pos.x = rand.Next(imageWidth); }
-                    else
-                        bot.Move(closestDir);
+                    bot.SampleTick(bots);
                 });
             }
         }
