@@ -1,20 +1,13 @@
 ﻿using System;
+using System.Collections.Concurrent;    //BlockingCollection<T>
 using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;               // stopwatch
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;           //Parallel stuff & task factory
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;     //WriteableBitmap
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections.Concurrent;    //BlockingCollection<T>
-using System.Diagnostics;               // stopwatch
-using System.Threading.Tasks;           //Parallel stuff & task factory
-
 
 namespace Kerumaton
 {
@@ -23,13 +16,12 @@ namespace Kerumaton
     /// </summary>
     public partial class MainWindow : Window
     {
-
         // Declaration
         public static WriteableBitmap bmp;
-        Random rand;
-        Stopwatch stopwatch;
-        List<Automate> bots;
-        BlockingCollection<Automate> automateQueue;
+
+        private Random rand;
+        private Stopwatch stopwatch;
+        private BlockingCollection<Automate> automateQueue;
 
         public static int imageWidth = 1000;
         public static int imageHeight = 1000;
@@ -46,7 +38,7 @@ namespace Kerumaton
             //Call some required constructor
             rand = new Random();
             bmp = new WriteableBitmap(imageWidth, imageHeight, 96, 96, PixelFormats.Bgr32, null);
-            bots = new List<Automate>();
+            World.bots = new ConcurrentBag<Automate>();
             var tasks = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
 
             //Init some values
@@ -55,49 +47,55 @@ namespace Kerumaton
             //Sample bot
             for (int i = 0; i < World.maxAutomaton; i++)
             {
-                //bots.Add(new Automate(rand.Next(0,imageWidth-1), rand.Next(0, imageHeight-1), i));
-                bots.Add(new Automate(rand.Next(400,600), rand.Next(400,600), i));
+                World.SpawnAutomaton();
             }
             //Set xaml Image as the bmp & update the screen
-            tasks.StartNew(() => MainLoop());
+            _ = tasks.StartNew(() => MainLoop());
         }
 
-        private void MainLoop()
+        //MainLoop is in a manually started task.
+        public static void MainLoop()
         {
-            Thread.Sleep(3000);
+            Random rand = new Random();
+            //Thread.Sleep(3000);
+
             while (true)
             {
-                Parallel.ForEach(bots, (bot) =>
+                _ = Parallel.ForEach(World.bots, (bot) =>
+                  {
+                      bot.SampleTick();
+                  });
+                if (rand.Next(1) == 0) World.SpawnAutomaton();
+                //lock(World.bots)
                 {
-                    bot.SampleTick(bots);
-                });
+                    if (rand.Next(1000) == 0 && World.bots.Count > 1) World.bots.Take(1);
+                }
             }
         }
 
-        private void ScreenUpdate()
+        private void CompositionTargetRendering(object sender, EventArgs e)
         {
-        }
-
-        void CompositionTargetRendering(object sender, EventArgs e)
-        {
-            //if (rand.Next(100) == 1)
             {
                 bmp.Lock();
                 bmp.Clear(Colors.Black);
-                foreach (var b in bots)
+                //lock (World.bots)
                 {
-                    //bmp.SetPixel(b.pos.x, b.pos.y, b.color);
-                    bmp.FillEllipseCentered(b.pos.x, b.pos.y, 3, 3, b.color);
+                    foreach (var b in World.bots)
+                    //Parallel.ForEach(World.bots, b =>
+                    {
+                        //bmp.SetPixel(b.pos.x, b.pos.y, b.color);
+                        bmp.FillEllipseCentered(b.pos.x, b.pos.y, 3, 3, b.Color);
+                    }
+                    //});
                 }
                 bmp.AddDirtyRect(new Int32Rect(0, 0, bmp.PixelWidth, bmp.PixelHeight));
                 bmp.Unlock();
+                CreatureCountLabel.Text = $"Creature Count : {World.bots.Count}";
             }
         }
 
         private void MainImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //imageWidth = bmp.PixelWidth;
-            //imageHeight = bmp.PixelHeight;
         }
     }
 }

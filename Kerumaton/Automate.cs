@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Media;
-using Kerumaton;
 using static Kerumaton.World;
-using System.Threading.Tasks;
 
 namespace Kerumaton
 {
-    class Automate
+    internal class Automate
     {
-        Random rand = new Random();
+        private Random rand = new Random();
+
         // The automate position
         public class Position
         {
@@ -34,7 +31,7 @@ namespace Kerumaton
 
         public Position pos;
 
-        //TYPE OF ACTOR TO BE EVENTUALLY IMPLEMENTED : 
+        //TYPE OF ACTOR TO BE EVENTUALLY IMPLEMENTED :
         // - Something to move
         // - RADAR (beam, high range)
         // - EYE (large angle, low range)
@@ -45,61 +42,66 @@ namespace Kerumaton
         // - world position sensor
         // - sex ?
 
-        public int id { get; set; }
-        public int hp { get; set; }
-        public bool isAlive { get; set; }
-        public Color color { get; set; }
-        public int energy { get; set; }
-        public int lifetime { get; set; }
+        public long ID { get; set; }
+        public int HP { get; set; }
+        public bool IsAlive { get; set; }
+        public Color Color { get; set; }
+        public int Energy { get; set; }
+        public int Lifetime { get; set; }
 
-        public worldElement ElementType = worldElement.AUTOMATE;
+        public WorldElement ElementType = WorldElement.AUTOMATE;
 
-        public Automate(int x, int y, int id)
+        public Automate(int x, int y, long id)
         {
             this.pos = new Position(x, y);
-            this.id = id;
-            color = Color.FromRgb((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
-            lifetime = rand.Next(maxLifetime);
+            this.ID = id;
+            Color = Color.FromRgb((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
+            Lifetime = rand.Next(maxLifetime);
         }
 
-        public void SampleTick(List<Automate> bots)
+        public void SampleTick()
         {
-            Direction closestDir = this.findClosestDirection(bots);
+            Lifetime++;
 
-            if (lifetime >= World.maxLifetime) { 
-                this.pos.y = rand.Next(MainWindow.imageHeight); 
+            Direction closestDir = this.FindClosestDirection();
+
+            if (Lifetime >= World.maxLifetime)
+            {
+                this.pos.y = rand.Next(MainWindow.imageHeight);
                 this.pos.x = rand.Next(MainWindow.imageWidth);
-                lifetime = rand.Next(maxLifetime);
+                Lifetime = rand.Next(maxLifetime);
             }
             else if (rand.Next(1000) == 0) this.Move(this.RandomDirection());
             else this.Move(closestDir);
-
         }
 
-        Direction findClosestDirection(List<Automate> bots)
+        private Automate FindNearestNeighbor()
         {
-            double closestDistance = int.MaxValue;
-            Direction closestDir = this.RandomDirection();
-            Direction tmpDirx, tmpDiry;
-            lifetime++;
-
-            foreach (var b in bots)
-            //Parallel.ForEach( bots, b =>
+            float distance;
+            float closestDistance = float.MaxValue;
+            Automate found = null;
+            foreach (var bot in World.bots)
             {
-                double distance = Math.Sqrt(
-                    (b.pos.x - this.pos.x) * (b.pos.x - this.pos.x) + (b.pos.y - this.pos.y) * (b.pos.y - this.pos.y));
+                //Math.Sqsrt isn't required if we don't really need the actual distance
+                distance = (bot.pos.x - this.pos.x) * (bot.pos.x - this.pos.x)
+                         + (bot.pos.y - this.pos.y) * (bot.pos.y - this.pos.y);
 
-                if (distance < closestDistance && b.id != this.id)
+                //We need to ignore "self" otherwise the closest distance is always 0.0 ;)
+                if (distance < closestDistance && bot.ID != this.ID)
                 {
-                    tmpDirx = (this.pos.x < b.pos.x) ? Direction.W : Direction.E;
-                    tmpDiry = (this.pos.y < b.pos.y) ? Direction.N : Direction.S;
-                    closestDir = (Math.Abs(b.pos.x - this.pos.x) < Math.Abs(b.pos.y - this.pos.y)) ? tmpDirx : tmpDiry;
-                    lock ((object)closestDistance) { closestDistance = distance; }
+                    closestDistance = distance;
+                    found = bot;
                 }
             }
-            //});
-            return closestDir;
+            return found;
+        }
 
+        private Direction FindClosestDirection()
+        {
+            Automate closest = FindNearestNeighbor();
+            Direction tmpDirx = (this.pos.x < closest.pos.x) ? Direction.W : Direction.E;
+            Direction tmpDiry = (this.pos.y < closest.pos.y) ? Direction.N : Direction.S;
+            return (Math.Abs(closest.pos.x - this.pos.x) < Math.Abs(closest.pos.y - this.pos.y)) ? tmpDirx : tmpDiry;
         }
 
         public Direction RandomDirection()
@@ -151,6 +153,5 @@ namespace Kerumaton
                     return false;
             }
         }
-
     }
 }

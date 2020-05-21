@@ -6,11 +6,14 @@
         xmlns:local="clr-namespace:Kerumaton"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="800">
-    <Grid>
+    <Grid
+        MinWidth="300">
+
+        <StackPanel Grid.Column="0">
+            <TextBlock Name="CreatureCountLabel"  Text="Automaton Count : "></TextBlock>
+        </StackPanel>
 
         <Image Name="MainImage"
-               SizeChanged="MainImage_SizeChanged"
-        />
-
+               SizeChanged="MainImage_SizeChanged" />
     </Grid>
 </Window>
