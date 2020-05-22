@@ -16,11 +16,11 @@ namespace Kerumaton
     {
         // Declaration
         public static WriteableBitmap bmp;
+        public static int framecount;
 
         private readonly Random rand;
         //private Stopwatch stopwatch;
         //private BlockingCollection<Automate> automateQueue;
-
 
         public MainWindow()
         {
@@ -39,6 +39,7 @@ namespace Kerumaton
 
             //Init some values
             MainImage.Source = bmp;
+            framecount = 0;
 
             //Sample bot
             for (int i = 0; i < World.maxAutomaton; i++)
@@ -57,11 +58,14 @@ namespace Kerumaton
 
             while (true)
             {
+                World.Tick();
+
                 _ = Parallel.ForEach(World.bots, (bot) =>
                   {
-                      bot.SampleTick();
+                      bot.Tick();
+                      //bot.SampleTick();
                   });
-                if (rand.Next(1) == 0)
+/*                if (rand.Next(1) == 0)
                 {
                     World.SpawnAutomaton();
                 }
@@ -72,11 +76,15 @@ namespace Kerumaton
                         World.bots.Take(1);
                     }
                 }
+*/
             }
         }
 
         private void CompositionTargetRendering(object sender, EventArgs e)
         {
+
+            framecount++;
+
             bmp.Lock();
 
             //Clear screen
@@ -84,9 +92,9 @@ namespace Kerumaton
 
             //Draw grid
             Color GridColor = Color.FromRgb(50, 50, 50);
-            for(int y = 0; y < World.imageHeight; y++)
+            for (int y = 0; y < World.imageHeight; y++)
             {
-                for(int x = 0; x < World.imageHeight; x++)
+                for (int x = 0; x < World.imageHeight; x++)
                 {
                     if (y % Grid.gridHeight == 0 || x % Grid.gridWidth == 0) { bmp.SetPixel(x, y, GridColor); }
                 }
@@ -103,6 +111,8 @@ namespace Kerumaton
             bmp.Unlock();
 
             CreatureCountLabel.Text = $"Creature Count : {World.bots.Count}";
+            WorldLifetimeLabel.Text = $"World Lifetime : {World.lifetime}";
+            FrameCounterLabel.Text = $"Frame counter : { MainWindow.framecount}";
         }
 
         private void MainImage_SizeChanged(object sender, SizeChangedEventArgs e)

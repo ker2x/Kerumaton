@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kerumaton
+﻿namespace Kerumaton
 {
-    class Grid
+    internal class Grid
     {
-        public const int gridWidth  = 10;
+        public const int gridWidth = 10;
         public const int gridHeight = 10;
-
     }
 }

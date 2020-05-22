@@ -12,7 +12,8 @@ namespace Kerumaton
         public const int imageWidth = 500;
         public const int imageHeight = 500;
 
-        static public long automatonLastID = 0;
+        static public int lifetime = 0;
+        static public int automatonLastID = 0;
         static public List<Automate> bots;
 
         //Enums
@@ -28,6 +29,11 @@ namespace Kerumaton
             WATER = 5,
             FOOD = 6
         };
+
+        public static void Tick()
+        {
+            lifetime++;
+        }
 
         public static void SpawnAutomaton()
         {

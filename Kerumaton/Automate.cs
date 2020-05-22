@@ -59,6 +59,19 @@ namespace Kerumaton
             Lifetime = rand.Next(maxLifetime);
         }
 
+        public void Tick()
+        {
+            Lifetime++;
+
+            if (Lifetime >= World.maxLifetime)
+            {
+                pos.y = rand.Next(World.imageHeight);
+                pos.x = rand.Next(World.imageWidth);
+                Lifetime = rand.Next(maxLifetime);
+            }
+
+        }
+
         public void SampleTick()
         {
             Lifetime++;
@@ -71,10 +84,10 @@ namespace Kerumaton
                 pos.x = rand.Next(World.imageWidth);
                 Lifetime = rand.Next(maxLifetime);
             }
-//            else if (rand.Next(1000) == 0)
-//            {
-//                Move(RandomDirection());
-//            }
+            //            else if (rand.Next(1000) == 0)
+            //            {
+            //                Move(RandomDirection());
+            //            }
             else
             {
                 Move(closestDir);
