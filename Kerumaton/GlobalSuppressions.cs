@@ -6,3 +6,4 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Usage", "CA2211:Les champs non constants ne doivent pas être visibles", Justification = "<En attente>", Scope = "member", Target = "~F:Kerumaton.MainWindow.bmp")]
+[assembly: SuppressMessage("Usage", "CA2211:Les champs non constants ne doivent pas être visibles", Justification = "<En attente>", Scope = "member", Target = "~F:Kerumaton.MainWindow.framecount")]

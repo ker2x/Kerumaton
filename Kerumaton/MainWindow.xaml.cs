@@ -63,20 +63,7 @@ namespace Kerumaton
                 _ = Parallel.ForEach(World.bots, (bot) =>
                   {
                       bot.Tick();
-                      //bot.SampleTick();
                   });
-/*                if (rand.Next(1) == 0)
-                {
-                    World.SpawnAutomaton();
-                }
-                //lock(World.bots)
-                {
-                    if (rand.Next(1000) == 0 && World.bots.Count > 1)
-                    {
-                        World.bots.Take(1);
-                    }
-                }
-*/
             }
         }
 
@@ -96,7 +83,7 @@ namespace Kerumaton
             {
                 for (int x = 0; x < World.imageHeight; x++)
                 {
-                    if (y % Grid.gridHeight == 0 || x % Grid.gridWidth == 0) { bmp.SetPixel(x, y, GridColor); }
+                    if (y % WorldGrid.gridHeight == 0 || x % WorldGrid.gridWidth == 0) { bmp.SetPixel(x, y, GridColor); }
                 }
             }
 
@@ -115,8 +102,5 @@ namespace Kerumaton
             FrameCounterLabel.Text = $"Frame counter : { MainWindow.framecount}";
         }
 
-        private void MainImage_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-        }
     }
 }

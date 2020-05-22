@@ -14,8 +14,7 @@
             <TextBlock Text="World lifetime : " Name="WorldLifetimeLabel"/>
             <TextBlock Text="Frame counter : " Name="FrameCounterLabel"/>
         </StackPanel>
-
-        <Image Name="MainImage"
-               SizeChanged="MainImage_SizeChanged" />
+        
+        <Image Name="MainImage"/>
     </Grid>
 </Window>
