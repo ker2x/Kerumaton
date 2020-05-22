@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Kerumaton
@@ -7,11 +7,13 @@ namespace Kerumaton
     internal static class World
     {
         //Parameters
-        public const int maxAutomaton = 1000;
-
+        public const int maxAutomaton = 500;
         public const int maxLifetime = 100000;
-        static public Int64 automatonLastID = 0;
-        static public ConcurrentBag<Automate> bots;
+        public const int imageWidth = 500;
+        public const int imageHeight = 500;
+
+        static public long automatonLastID = 0;
+        static public List<Automate> bots;
 
         //Enums
         public enum Direction { N = 0, E = 1, S = 2, W = 3 }
@@ -31,7 +33,14 @@ namespace Kerumaton
         {
             Random rand = new Random();
             Interlocked.Increment(ref automatonLastID);
-            bots.Add(new Automate(rand.Next(300, 700), rand.Next(300, 700), automatonLastID));
+            lock (bots)
+            {
+                bots.Add(new Automate(
+                    rand.Next(0, imageWidth - 1),
+                    rand.Next(0, imageHeight - 1),
+                    automatonLastID)
+                    );
+            }
         }
     }
 }

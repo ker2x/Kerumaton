@@ -6,13 +6,13 @@ namespace Kerumaton
 {
     internal class Automate
     {
-        private Random rand = new Random();
+        private readonly Random rand = new Random();
 
         // The automate position
         public class Position
         {
-            public int x { get; set; }
-            public int y { get; set; }
+            public int x;//{ get; set; }
+            public int y;// { get; set; }
 
             public Position()
             {
@@ -53,8 +53,8 @@ namespace Kerumaton
 
         public Automate(int x, int y, long id)
         {
-            this.pos = new Position(x, y);
-            this.ID = id;
+            pos = new Position(x, y);
+            ID = id;
             Color = Color.FromRgb((byte)rand.Next(255), (byte)rand.Next(255), (byte)rand.Next(255));
             Lifetime = rand.Next(maxLifetime);
         }
@@ -63,16 +63,22 @@ namespace Kerumaton
         {
             Lifetime++;
 
-            Direction closestDir = this.FindClosestDirection();
+            Direction closestDir = FindClosestDirection();
 
             if (Lifetime >= World.maxLifetime)
             {
-                this.pos.y = rand.Next(MainWindow.imageHeight);
-                this.pos.x = rand.Next(MainWindow.imageWidth);
+                pos.y = rand.Next(World.imageHeight);
+                pos.x = rand.Next(World.imageWidth);
                 Lifetime = rand.Next(maxLifetime);
             }
-            else if (rand.Next(1000) == 0) this.Move(this.RandomDirection());
-            else this.Move(closestDir);
+//            else if (rand.Next(1000) == 0)
+//            {
+//                Move(RandomDirection());
+//            }
+            else
+            {
+                Move(closestDir);
+            }
         }
 
         private Automate FindNearestNeighbor()
@@ -83,11 +89,11 @@ namespace Kerumaton
             foreach (var bot in World.bots)
             {
                 //Math.Sqsrt isn't required if we don't really need the actual distance
-                distance = (bot.pos.x - this.pos.x) * (bot.pos.x - this.pos.x)
-                         + (bot.pos.y - this.pos.y) * (bot.pos.y - this.pos.y);
+                distance = (bot.pos.x - pos.x) * (bot.pos.x - pos.x)
+                         + (bot.pos.y - pos.y) * (bot.pos.y - pos.y);
 
                 //We need to ignore "self" otherwise the closest distance is always 0.0 ;)
-                if (distance < closestDistance && bot.ID != this.ID)
+                if (distance < closestDistance && distance != 0.0)
                 {
                     closestDistance = distance;
                     found = bot;
@@ -99,9 +105,14 @@ namespace Kerumaton
         private Direction FindClosestDirection()
         {
             Automate closest = FindNearestNeighbor();
-            Direction tmpDirx = (this.pos.x < closest.pos.x) ? Direction.W : Direction.E;
-            Direction tmpDiry = (this.pos.y < closest.pos.y) ? Direction.N : Direction.S;
-            return (Math.Abs(closest.pos.x - this.pos.x) < Math.Abs(closest.pos.y - this.pos.y)) ? tmpDirx : tmpDiry;
+            if (pos.x == closest.pos.x && (pos.y == closest.pos.y))
+            {
+                return RandomDirection();
+            }
+
+            Direction tmpDirx = (pos.x < closest.pos.x) ? Direction.W : Direction.E;
+            Direction tmpDiry = (pos.y < closest.pos.y) ? Direction.N : Direction.S;
+            return (Math.Abs(closest.pos.x - pos.x) < Math.Abs(closest.pos.y - pos.y)) ? tmpDirx : tmpDiry;
         }
 
         public Direction RandomDirection()
@@ -115,7 +126,10 @@ namespace Kerumaton
             {
                 case Direction.N:
                     {
-                        if (pos.y == 0) return false;
+                        if (pos.y == 0)
+                        {
+                            return false;
+                        }
                         else
                         {
                             pos.y--;
@@ -124,7 +138,10 @@ namespace Kerumaton
                     }
                 case Direction.S:
                     {
-                        if (pos.y == MainWindow.imageHeight - 1) return false;
+                        if (pos.y == World.imageHeight - 1)
+                        {
+                            return false;
+                        }
                         else
                         {
                             pos.y++;
@@ -133,7 +150,10 @@ namespace Kerumaton
                     }
                 case Direction.W:
                     {
-                        if (pos.x == 0) return false;
+                        if (pos.x == 0)
+                        {
+                            return false;
+                        }
                         else
                         {
                             pos.x--;
@@ -142,7 +162,10 @@ namespace Kerumaton
                     }
                 case Direction.E:
                     {
-                        if (pos.x == MainWindow.imageWidth - 1) return false;
+                        if (pos.x == World.imageWidth - 1)
+                        {
+                            return false;
+                        }
                         else
                         {
                             pos.x++;
