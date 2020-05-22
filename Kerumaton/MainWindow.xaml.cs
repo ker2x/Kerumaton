@@ -17,7 +17,7 @@ namespace Kerumaton
         // Declaration
         public static WriteableBitmap bmp;
         public static int framecount;
-
+        WorldGrid worldGrid;
         private readonly Random rand;
         //private Stopwatch stopwatch;
         //private BlockingCollection<Automate> automateQueue;
@@ -34,6 +34,8 @@ namespace Kerumaton
             //Call some required constructor
             rand = new Random();
             bmp = new WriteableBitmap(World.imageWidth, World.imageHeight, 96, 96, PixelFormats.Bgr32, null);
+            worldGrid = new WorldGrid();
+
             World.bots = new List<Automate>();
             var tasks = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
 
@@ -90,7 +92,11 @@ namespace Kerumaton
             //Draw bots
             foreach (var b in World.bots.ToArray())
             {
-                bmp.FillEllipseCentered(b.pos.x, b.pos.y, 3, 3, b.Color);
+                //bmp.FillEllipseCentered(b.pos.x, b.pos.y, 3, 3, b.Color);
+                bmp.FillRectangle(
+                    b.pos.x - (WorldGrid.gridWidth / 2), b.pos.y - (WorldGrid.gridHeight / 2), 
+                    b.pos.x + (WorldGrid.gridWidth / 2), b.pos.y + (WorldGrid.gridHeight / 2), 
+                    b.Color);
                 //bmp.SetPixel(b.pos.x, b.pos.y, b.Color);
             }
 
