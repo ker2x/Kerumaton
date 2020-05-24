@@ -10,8 +10,8 @@ namespace Kerumaton
         public int[][] gridArray;
         public WorldGrid()
         {
-            gridSizeX = World.imageWidth % gridWidth;
-            gridSizeY = World.imageHeight % gridHeight;
+            gridSizeX = world.imageWidth % gridWidth;
+            gridSizeY = world.imageHeight % gridHeight;
             gridArray = new int[gridSizeX][];
             for(int i = 0; i < gridArray.Length; i++)
             {

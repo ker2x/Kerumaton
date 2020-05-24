@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Media;
-using static Kerumaton.World;
+using static Kerumaton.world;
 
 namespace Kerumaton
 {
@@ -63,10 +63,10 @@ namespace Kerumaton
         {
             Lifetime++;
 
-            if (Lifetime >= World.maxLifetime)
+            if (Lifetime >= world.maxLifetime)
             {
-                pos.y = rand.Next(World.imageHeight);
-                pos.x = rand.Next(World.imageWidth);
+                pos.y = rand.Next(world.imageHeight);
+                pos.x = rand.Next(world.imageWidth);
                 Lifetime = rand.Next(maxLifetime);
             }
 
@@ -78,10 +78,10 @@ namespace Kerumaton
 
             Direction closestDir = FindClosestDirection();
 
-            if (Lifetime >= World.maxLifetime)
+            if (Lifetime >= world.maxLifetime)
             {
-                pos.y = rand.Next(World.imageHeight);
-                pos.x = rand.Next(World.imageWidth);
+                pos.y = rand.Next(world.imageHeight);
+                pos.x = rand.Next(world.imageWidth);
                 Lifetime = rand.Next(maxLifetime);
             }
             //            else if (rand.Next(1000) == 0)
@@ -99,7 +99,7 @@ namespace Kerumaton
             float distance;
             float closestDistance = float.MaxValue;
             Automate found = null;
-            foreach (var bot in World.bots)
+            foreach (var bot in world.bots)
             {
                 //Math.Sqsrt isn't required if we don't really need the actual distance
                 distance = (bot.pos.x - pos.x) * (bot.pos.x - pos.x)
@@ -151,7 +151,7 @@ namespace Kerumaton
                     }
                 case Direction.S:
                     {
-                        if (pos.y == World.imageHeight - 1)
+                        if (pos.y == world.imageHeight - 1)
                         {
                             return false;
                         }
@@ -175,7 +175,7 @@ namespace Kerumaton
                     }
                 case Direction.E:
                     {
-                        if (pos.x == World.imageWidth - 1)
+                        if (pos.x == world.imageWidth - 1)
                         {
                             return false;
                         }

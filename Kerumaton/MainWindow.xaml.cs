@@ -33,10 +33,10 @@ namespace Kerumaton
 
             //Call some required constructor
             rand = new Random();
-            bmp = new WriteableBitmap(World.imageWidth, World.imageHeight, 96, 96, PixelFormats.Bgr32, null);
+            bmp = new WriteableBitmap(world.imageWidth, world.imageHeight, 96, 96, PixelFormats.Bgr32, null);
             worldGrid = new WorldGrid();
 
-            World.bots = new List<Automate>();
+            world.bots = new List<Automate>();
             var tasks = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
 
             //Init some values
@@ -44,9 +44,9 @@ namespace Kerumaton
             framecount = 0;
 
             //Sample bot
-            for (int i = 0; i < World.maxAutomaton; i++)
+            for (int i = 0; i < world.maxAutomaton; i++)
             {
-                World.SpawnAutomaton();
+                world.SpawnAutomaton();
             }
             //Set xaml Image as the bmp & update the screen
             _ = tasks.StartNew(() => MainLoop());
@@ -60,9 +60,9 @@ namespace Kerumaton
 
             while (true)
             {
-                World.Tick();
+                world.Tick();
 
-                _ = Parallel.ForEach(World.bots, (bot) =>
+                _ = Parallel.ForEach(world.bots, (bot) =>
                   {
                       bot.Tick();
                   });
@@ -81,16 +81,16 @@ namespace Kerumaton
 
             //Draw grid
             Color GridColor = Color.FromRgb(50, 50, 50);
-            for (int y = 0; y < World.imageHeight; y++)
+            for (int y = 0; y < world.imageHeight; y++)
             {
-                for (int x = 0; x < World.imageHeight; x++)
+                for (int x = 0; x < world.imageHeight; x++)
                 {
                     if (y % WorldGrid.gridHeight == 0 || x % WorldGrid.gridWidth == 0) { bmp.SetPixel(x, y, GridColor); }
                 }
             }
 
             //Draw bots
-            foreach (var b in World.bots.ToArray())
+            foreach (var b in world.bots.ToArray())
             {
                 //bmp.FillEllipseCentered(b.pos.x, b.pos.y, 3, 3, b.Color);
                 bmp.FillRectangle(
@@ -103,8 +103,8 @@ namespace Kerumaton
             bmp.AddDirtyRect(new Int32Rect(0, 0, bmp.PixelWidth, bmp.PixelHeight));
             bmp.Unlock();
 
-            CreatureCountLabel.Text = $"Creature Count : {World.bots.Count}";
-            WorldLifetimeLabel.Text = $"World Lifetime : {World.lifetime}";
+            CreatureCountLabel.Text = $"Creature Count : {world.bots.Count}";
+            WorldLifetimeLabel.Text = $"World Lifetime : {world.lifetime}";
             FrameCounterLabel.Text = $"Frame counter : { MainWindow.framecount}";
         }
 

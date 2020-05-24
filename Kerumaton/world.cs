@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Kerumaton
 {
-    internal static class World
+    internal static class world
     {
         //Parameters
         public const int maxAutomaton = 500;
